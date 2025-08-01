@@ -183,5 +183,5 @@ npm start
 
 **Gaurav Kumar**  
 Email: gaurav_kumar@srmap.edu.in  
-GitHub: [@gauravkumar08](https://github.com/gauravkumar08)
+GitHub: [[@gauravkumar08](https://github.com/gauravkumar08)](https://github.com/gauravkumar08)
 
