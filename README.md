@@ -1,4 +1,4 @@
-# 🌐 Job & Networking Portal (Web3 + AI)
+# 🌐 Job Portal (Web3 + AI)
 
 A full-stack web application inspired by LinkedIn, AngelList, and Upwork. This platform enables users to create profiles, connect wallets, post jobs, and interact socially — enhanced with AI-driven job matching, resume parsing, and Web3 blockchain payments.
 
