@@ -2,7 +2,7 @@
 
 A full-stack web application inspired by LinkedIn, AngelList, and Upwork. This platform enables users to create profiles, connect wallets, post jobs, and interact socially — enhanced with AI-driven job matching, resume parsing, and Web3 blockchain payments.
 
----
+
 
 ## 🚀 Features
 
@@ -27,7 +27,7 @@ A full-stack web application inspired by LinkedIn, AngelList, and Upwork. This p
   - Job-applicant match scoring (similarity matching)
   - Smart job suggestions
 
----
+
 
 ## 🧱 Tech Stack
 
@@ -35,13 +35,13 @@ A full-stack web application inspired by LinkedIn, AngelList, and Upwork. This p
 |----------------|----------------------------------------|
 | Frontend        | React.js, Tailwind CSS                 |
 | Backend         | Node.js, Express.js                   |
-| Database        | MongoDB / PostgreSQL                  |
-| Blockchain      | Ethereum / Polygon / Solana           |
-| Wallet          | MetaMask / Phantom                    |
+| Database        | MongoDB                               |
+| Blockchain      | Ethereum                              |
+| Wallet          | MetaMask                              |
 | AI/NLP          | Python (spaCy, scikit-learn, etc.), Node integration via API |
-| Smart Contract (optional) | Solidity / Rust (for on-chain logging)       |
 
----
+
+
 
 ## 📁 Folder Structure
 
@@ -74,7 +74,7 @@ project-root/
 └── README.md
 ```
 
----
+
 
 ## ⚙️ Setup Instructions
 
@@ -104,7 +104,6 @@ REACT_APP_CHAIN_ID=80001
 REACT_APP_ADMIN_WALLET=your_admin_wallet_address
 ```
 
----
 
 ### 3. Install Dependencies
 
@@ -120,7 +119,6 @@ cd ../client
 npm install
 ```
 
----
 
 ### 4. Run the App
 
@@ -134,17 +132,13 @@ cd client
 npm start
 ```
 
----
-
 ## 🔐 Web3 + Payment Flow
 
 1. User connects MetaMask or Phantom wallet.
 2. On job post action:
    - Transaction triggers to admin wallet (0.001 ETH or 0.01 SOL)
    - Verified via ethers.js / solana-web3.js
-   - On success → job is posted.
 
----
 
 ## 🧠 AI Features
 
@@ -152,7 +146,6 @@ npm start
 - **Match Score**: Uses TF-IDF or cosine similarity to compute compatibility between job and candidate profile.
 - **Smart Suggestions**: Recommends jobs based on skills & interest.
 
----
 
 ## 📦 API Endpoints (Backend)
 
@@ -167,7 +160,6 @@ npm start
 | POST   | `/api/ai/skills`     | Extract skills from resume       |
 | POST   | `/api/ai/match`      | Get job match score              |
 
----
 
 ## 🔗 Dependencies
 
@@ -178,7 +170,6 @@ npm start
 - spaCy, scikit-learn (for AI features)
 - multer, axios, dotenv
 
----
 
 ## 🎯 Future Improvements
 
@@ -187,16 +178,10 @@ npm start
 - On-chain logging of job metadata
 - Fully decentralized resume storage (e.g., IPFS)
 
----
 
 ## 👨‍💻 Author
 
 **Gaurav Kumar**  
-Email: your.email@example.com  
+Email: gaurav_kumar@srmap.edu.in  
 GitHub: [@gauravkumar08](https://github.com/gauravkumar08)
 
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
