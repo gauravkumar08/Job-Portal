@@ -100,20 +100,19 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard = () => {
-  const navigate = useNavigate();
   const [job, setJob] = useState({
     title: "",
     company: "",
     location: "",
     salary: "",
     description: "",
+    jobType: "", // Required by backend
   });
+
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
-
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
@@ -124,8 +123,13 @@ const RecruiterDashboard = () => {
     e.preventDefault();
     setLoading(true);
 
+    const payload = {
+      ...job,
+      salary: Number(job.salary), // Ensures salary is numeric
+    };
+
     try {
-      await axios.post("http://localhost:5000/api/jobs", job, {
+      const res = await axios.post("http://localhost:5000/api/jobs", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -136,8 +140,9 @@ const RecruiterDashboard = () => {
         location: "",
         salary: "",
         description: "",
+        jobType: "",
       });
-      fetchJobs(); // Refresh the job list
+      fetchJobs(); // Refresh job list
     } catch (err) {
       console.error("❌ Job post error:", err);
       alert(err.response?.data?.message || "Job posting failed.");
@@ -207,13 +212,30 @@ const RecruiterDashboard = () => {
             required
           />
           <input
-            type="text"
+            type="number"
             name="salary"
-            placeholder="Salary (e.g. ₹5 LPA)"
+            placeholder="Salary (e.g. ₹500000)"
             value={job.salary}
             onChange={handleChange}
             className="w-full border p-2 rounded"
+            required
           />
+
+          {/* ✅ Job Type Dropdown */}
+          <select
+            name="jobType"
+            value={job.jobType}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          >
+            <option value="">Select Job Type</option>
+            <option value="full-time">Full-Time</option>
+            <option value="part-time">Part-Time</option>
+            <option value="contract">Contract</option>
+            <option value="remote">Remote</option>
+          </select>
+
           <textarea
             name="description"
             placeholder="Job Description"
@@ -243,7 +265,7 @@ const RecruiterDashboard = () => {
               <li key={job._id} className="border p-4 rounded">
                 <h4 className="text-lg font-semibold">{job.title}</h4>
                 <p className="text-gray-700">
-                  {job.company} | {job.location} | 💰 {job.salary}
+                  {job.company} | {job.location} | 💰 {job.salary} | 🕒 {job.jobType}
                 </p>
                 <p className="text-sm text-gray-500 mb-2">{job.description}</p>
                 <button
@@ -262,3 +284,6 @@ const RecruiterDashboard = () => {
 };
 
 export default RecruiterDashboard;
+
+
+
