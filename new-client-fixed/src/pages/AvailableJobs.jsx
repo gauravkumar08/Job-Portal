@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // ✅ Imported Link
 
 const AvailableJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -18,6 +17,22 @@ const AvailableJobs = () => {
     fetchJobs();
   }, []);
 
+  const handleApply = async (jobId, jobTitle) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        "http://localhost:5000/api/applications",
+        { jobId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert(`✅ You applied for ${jobTitle}`);
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Failed to apply.");
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto mt-10">
       <h2 className="text-3xl font-bold text-center mb-6">Available Jobs</h2>
@@ -33,20 +48,19 @@ const AvailableJobs = () => {
               <h3 className="text-xl font-bold text-blue-700">{job.title}</h3>
               <p className="font-semibold text-gray-800">{job.company}</p>
               <p className="text-sm text-gray-600">{job.location}</p>
-              <p className="text-green-600 font-semibold">₹{job.salary} LPA</p>
+              <p className="text-green-600 font-semibold">
+                ₹{job.salary} LPA
+              </p>
               <p className="text-sm mt-2 text-gray-700">{job.description}</p>
-
               <span className="absolute top-6 right-6 text-xs bg-gray-100 px-2 py-1 rounded text-gray-800">
                 {job.jobType}
               </span>
-
-              {/* ✅ Updated View Details as a Link */}
-              <Link
-                to={`/jobs/${job._id}`}
-                className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              <button
+                onClick={() => handleApply(job._id, job.title)}
+                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
-                View Details
-              </Link>
+                Apply Now
+              </button>
             </li>
           ))}
         </ul>
