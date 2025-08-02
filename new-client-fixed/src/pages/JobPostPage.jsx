@@ -7,8 +7,10 @@ const JobPostPage = () => {
     company: "",
     location: "",
     salary: "",
+    jobType: "",       // ✅ Required by backend
     description: "",
   });
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -27,9 +29,16 @@ const JobPostPage = () => {
         },
       });
       alert("✅ Job posted successfully!");
-      setForm({ title: "", company: "", location: "", salary: "", description: "" });
+      setForm({
+        title: "",
+        company: "",
+        location: "",
+        salary: "",
+        jobType: "",       // ✅ Reset jobType too
+        description: "",
+      });
     } catch (err) {
-      console.error("Error posting job:", err);
+      console.error("❌ Error posting job:", err);
       alert(err.response?.data?.message || "❌ Failed to post job.");
     } finally {
       setLoading(false);
@@ -68,13 +77,30 @@ const JobPostPage = () => {
           required
         />
         <input
-          type="text"
+          type="number"
           name="salary"
-          placeholder="Salary"
+          placeholder="Salary (e.g. ₹500000)"
           className="w-full p-2 border rounded"
           value={form.salary}
           onChange={handleChange}
+          required
         />
+
+        {/* ✅ Job Type Dropdown */}
+        <select
+          name="jobType"
+          value={form.jobType}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        >
+          <option value="">Select Job Type</option>
+          <option value="full-time">Full-Time</option>
+          <option value="part-time">Part-Time</option>
+          <option value="contract">Contract</option>
+          <option value="remote">Remote</option>
+        </select>
+
         <textarea
           name="description"
           placeholder="Job Description"
