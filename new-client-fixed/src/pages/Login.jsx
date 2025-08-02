@@ -17,8 +17,8 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = form;
 
+    const { email, password } = form;
     if (!email || !password) {
       return alert("Please fill all fields");
     }
@@ -32,19 +32,21 @@ function Login() {
 
       const { token, user } = res.data;
 
-      // Save to localStorage
+      if (!user || !user.role) {
+        throw new Error("Invalid user response");
+      }
+
+      // ✅ Save user info
       localStorage.setItem("token", token);
-      localStorage.setItem("role", user.role); // candidate / recruiter
+      localStorage.setItem("role", user.role.toLowerCase());
       localStorage.setItem("user", JSON.stringify(user));
 
       alert("Login successful!");
 
-      // Redirect based on role
-      if (user.role === "recruiter") {
-        navigate("/recruiter-dashboard");
-      } else {
-        navigate("/profile");
-      }
+      // ✅ Redirect all to /profile
+      navigate("/profile");
+      window.location.reload(); // optional: refresh navbar/state
+
     } catch (err) {
       console.error("Login Error:", err);
       alert(err.response?.data?.message || "Login failed");
