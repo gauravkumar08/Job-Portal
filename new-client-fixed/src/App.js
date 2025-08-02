@@ -9,6 +9,8 @@ import Register from "./pages/Register";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import WalletConnect from "./components/WalletConnect";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
+import AvailableJobs from "./pages/AvailableJobs";
+import JobDetails from "./pages/JobDetails";
 
 function HomePage() {
   return (
@@ -66,6 +68,8 @@ function App() {
           <div className="space-x-4 flex items-center">
             <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
             <Link to="/jobs" className="text-gray-700 hover:text-blue-600">Jobs</Link>
+            <Link to="/available-jobs">Jobs</Link>
+
 
             {/* ✅ Recruiter-Only Links */}
             {userRole === "recruiter" && (
@@ -136,6 +140,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+          <Route path="/available-jobs" element={<AvailableJobs />} />
+          <Route path="/jobs/:id" element={<JobDetails />} />
         </Routes>
       </div>
     </Router>
