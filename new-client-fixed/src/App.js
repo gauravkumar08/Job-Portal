@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import JobPostPage from "./pages/JobPostPage";
 import CandidateProfile from "./pages/CandidateProfile";
-import JobList from "./pages/JobList";
-import JobDetail from "./pages/JobDetail";
+import JobList from "./pages/JobList"; // You can remove this if not used
+import JobDetail from "./pages/JobDetail"; // You can remove this if not used
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
@@ -11,6 +11,7 @@ import WalletConnect from "./components/WalletConnect";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import AvailableJobs from "./pages/AvailableJobs";
 import JobDetails from "./pages/JobDetails";
+import ProtectedRoute from "./components/ProtectedRoute"; // ✅ Import protected route
 
 function HomePage() {
   return (
@@ -20,7 +21,7 @@ function HomePage() {
         Connect with professionals, apply for jobs, and grow your career.
       </p>
       <div className="space-x-4">
-        <Link to="/jobs">
+        <Link to="/available-jobs">
           <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
             Browse Jobs
           </button>
@@ -42,7 +43,6 @@ function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem("role"));
 
   useEffect(() => {
-    // Watch changes to token/role in localStorage on mount or refresh
     const handleStorageChange = () => {
       setUserToken(localStorage.getItem("token"));
       setUserRole(localStorage.getItem("role"));
@@ -67,9 +67,9 @@ function App() {
           <h1 className="text-xl font-bold text-blue-600">JobConnect</h1>
           <div className="space-x-4 flex items-center">
             <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
-            <Link to="/jobs" className="text-gray-700 hover:text-blue-600">Jobs</Link>
-            <Link to="/available-jobs">Jobs</Link>
-
+            
+            {/* ✅ Protected Jobs Link */}
+            <Link to="/available-jobs" className="text-gray-700 hover:text-blue-600">Jobs</Link>
 
             {/* ✅ Recruiter-Only Links */}
             {userRole === "recruiter" && (
@@ -85,10 +85,8 @@ function App() {
               <Link to="/profile" className="text-gray-700 hover:text-blue-600">Profile</Link>
             )}
 
-            {/* Wallet Button */}
             <WalletConnect />
 
-            {/* Auth Buttons */}
             {!userToken ? (
               <>
                 <Link to="/login">
@@ -114,8 +112,20 @@ function App() {
         {/* Routes */}
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/jobs" element={<JobList />} />
-          <Route path="/jobs/:id" element={<JobDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
+          <Route path="/profile" element={<CandidateProfile />} />
+
+          {/* ✅ Protected Route for Jobs */}
+          <Route
+            path="/available-jobs"
+            element={
+              <ProtectedRoute>
+                <AvailableJobs />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/post-job"
             element={
@@ -136,11 +146,6 @@ function App() {
               )
             }
           />
-          <Route path="/profile" element={<CandidateProfile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
-          <Route path="/available-jobs" element={<AvailableJobs />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
         </Routes>
       </div>
