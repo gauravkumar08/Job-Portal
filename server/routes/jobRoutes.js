@@ -55,6 +55,7 @@ router.get("/", async (req, res) => {
     const jobs = await Job.find().sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
+    console.error("❌ Failed to fetch jobs:", err.message);
     res.status(500).json({ message: "Failed to fetch jobs" });
   }
 });
@@ -62,38 +63,57 @@ router.get("/", async (req, res) => {
 // ✅ Post a new job (recruiter only)
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const job = new Job({ ...req.body, postedBy: req.user.id });
+    const { title, company, location, description } = req.body;
+
+    // 🔒 Basic validation (recommended)
+    if (!title || !company || !location || !description) {
+      return res.status(400).json({ message: "All required fields must be filled" });
+    }
+
+    const job = new Job({
+      ...req.body,
+      postedBy: req.user.id, // From verified token
+    });
+
     await job.save();
     res.status(201).json(job);
   } catch (err) {
-    console.error("Post job error:", err);
+    console.error("❌ Error saving job:", err);
     res.status(500).json({ message: "Failed to post job" });
   }
 });
 
-// ✅ Get jobs posted by current recruiter
+// ✅ Get current recruiter's jobs
 router.get("/my-jobs", verifyToken, async (req, res) => {
   try {
     const jobs = await Job.find({ postedBy: req.user.id }).sort({ createdAt: -1 });
     res.json(jobs);
   } catch (err) {
+    console.error("❌ Error fetching recruiter's jobs:", err);
     res.status(500).json({ message: "Failed to fetch your jobs" });
   }
 });
 
-// ✅ Delete job (recruiter only)
+// ✅ Delete a job
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-    if (!job || job.postedBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Unauthorized or job not found" });
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (job.postedBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
     }
 
     await job.deleteOne();
     res.json({ message: "Job deleted successfully" });
   } catch (err) {
+    console.error("❌ Error deleting job:", err);
     res.status(500).json({ message: "Failed to delete job" });
   }
 });
 
 module.exports = router;
+
