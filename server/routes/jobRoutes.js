@@ -44,12 +44,26 @@
 // module.exports = router;
 
 
+// routes/jobRoutes.js
+
 const express = require("express");
 const router = express.Router();
 const Job = require("../models/Job");
 const { verifyToken } = require("../middleware/authMiddleware");
 
-// ✅ Get all jobs (public route)
+// ✅ Get job by ID (MUST come before /:id routes like /my-jobs or /delete)
+router.get("/:id", async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job not found" });
+    res.json(job);
+  } catch (err) {
+    console.error("❌ Error fetching job:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Get all jobs
 router.get("/", async (req, res) => {
   try {
     const jobs = await Job.find().sort({ createdAt: -1 });
@@ -60,20 +74,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Post a new job (recruiter only)
+// ✅ Create job
 router.post("/", verifyToken, async (req, res) => {
+  const { title, company, location, salary, jobType, description } = req.body;
+  if (!title || !company || !location || !salary || !jobType || !description) {
+    return res.status(400).json({ message: "All required fields must be filled" });
+  }
+
   try {
-    console.log("📥 Job Post Payload:", req.body);
-    console.log("👤 Recruiter ID from token:", req.user?.id);
-
-    const { title, company, location, salary, jobType, description } = req.body;
-
-    // 🔒 Validation
-    if (!title || !company || !location || !salary || !jobType || !description) {
-      return res.status(400).json({ message: "All required fields must be filled" });
-    }
-
-    // ✅ Create and save job
     const job = new Job({
       title,
       company,
@@ -85,8 +93,6 @@ router.post("/", verifyToken, async (req, res) => {
     });
 
     await job.save();
-    console.log("✅ Job saved successfully:", job);
-
     res.status(201).json(job);
   } catch (err) {
     console.error("❌ Error saving job:", err);
@@ -94,7 +100,7 @@ router.post("/", verifyToken, async (req, res) => {
   }
 });
 
-// ✅ Get current recruiter's jobs
+// ✅ Recruiter's own jobs
 router.get("/my-jobs", verifyToken, async (req, res) => {
   try {
     const jobs = await Job.find({ postedBy: req.user.id }).sort({ createdAt: -1 });
@@ -105,14 +111,11 @@ router.get("/my-jobs", verifyToken, async (req, res) => {
   }
 });
 
-// ✅ Delete a job (recruiter only)
+// ✅ Delete job
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
-    }
+    if (!job) return res.status(404).json({ message: "Job not found" });
 
     if (job.postedBy.toString() !== req.user.id) {
       return res.status(403).json({ message: "Unauthorized" });
@@ -127,6 +130,4 @@ router.delete("/:id", verifyToken, async (req, res) => {
 });
 
 module.exports = router;
-
-
 
